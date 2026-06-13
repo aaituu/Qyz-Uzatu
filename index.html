@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>АРУЖАН — ҚЫЗ ҰЗАТУ</title>
+<meta name="description" content="Қыз ұзату тойына шақыру">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:#0e0505;color:#f0e6d3;font-family:'Cormorant Garamond',Georgia,serif;overflow-x:hidden}
+
+/* ── VARIABLES ── */
+:root{
+  --brd:#5a0e0e;
+  --brd-mid:#7c1616;
+  --brd-light:#9e2222;
+  --gold:#c9a84c;
+  --gold-l:#e4c97a;
+  --cream:#f0e6d3;
+  --cream-d:#d9c9b0;
+  --dark:#0e0505;
+  --dark2:#1a0808;
+  --muted:rgba(240,230,211,0.55);
+}
+
+/* ── MUSIC BUTTON ── */
+#musicBtn{
+  position:fixed;bottom:1.8rem;right:1.8rem;z-index:500;
+  display:flex;align-items:center;gap:.6rem;
+  background:rgba(90,14,14,0.92);
+  border:1px solid var(--gold);
+  color:var(--gold);
+  padding:.6rem 1.1rem;
+  font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.18em;
+  cursor:pointer;backdrop-filter:blur(10px);
+  transition:all .25s ease;
+}
+#musicBtn:hover{background:var(--brd-mid);color:var(--gold-l)}
+#musicBtn svg{width:13px;height:13px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.5}
+
+/* ── SCROLL REVEAL ── */
+[data-sr]{
+  opacity:0;
+  transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);
+}
+[data-sr="left"]{transform:translateX(-55px)}
+[data-sr="right"]{transform:translateX(55px)}
+[data-sr="up"]{transform:translateY(50px)}
+[data-sr="zoom"]{transform:scale(.88)}
+[data-sr].visible{opacity:1;transform:none}
+
+/* ─────────────────────────────────
+   SECTION 1 · HERO (тою суреті + шақыру)
+───────────────────────────────── */
+#s1{
+  min-height:100vh;
+  background:var(--brd);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  padding:3rem 1.5rem 4rem;
+}
+/* subtle texture overlay */
+#s1::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(201,168,76,.06) 0%,transparent 65%),
+             radial-gradient(ellipse 100% 50% at 0% 100%,rgba(14,5,5,.5) 0%,transparent 60%),
+             radial-gradient(ellipse 80% 40% at 100% 0%,rgba(26,8,8,.6) 0%,transparent 50%);
+  pointer-events:none;
+}
+
+.s1-photo-wrap{
+  width:min(220px,62vw);
+  position:relative;
+  margin-bottom:2rem;
+}
+.s1-photo-wrap::before{
+  content:'';position:absolute;inset:-10px;
+  border:1px solid rgba(201,168,76,.2);pointer-events:none;
+}
+.s1-photo-wrap img{
+  width:100%;display:block;
+  box-shadow:0 0 40px rgba(196,187,187,.25);
+}
+/* photo placeholder if no image */
+.s1-photo-placeholder{
+  width:100%;aspect-ratio:9/16;
+  background:var(--brd-mid);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.2em;
+  color:rgba(201,168,76,.3);text-align:center;padding:1rem;
+}
+
+.s1-name{
+  font-size:clamp(3rem,13vw,7.5rem);
+  font-weight:300;letter-spacing:.1em;
+  color:var(--cream);line-height:.95;
+  text-align:center;position:relative;z-index:1;
+}
+.s1-sub{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:clamp(.95rem,3vw,1.35rem);
+  color:var(--gold);letter-spacing:.08em;
+  margin-top:.8rem;text-align:center;position:relative;z-index:1;
+}
+.s1-divider{
+  width:1px;height:60px;
+  background:linear-gradient(to bottom,transparent,var(--gold),transparent);
+  margin:1.8rem auto;opacity:.45;
+}
+.s1-music-hint{
+  font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.25em;
+  color:var(--gold);opacity:.6;text-align:center;
+  position:relative;z-index:1;
+}
+.s1-music-btn-inline{
+  display:inline-block;
+  margin-top:1.2rem;
+  padding:.5rem 1.4rem;
+  border:1px solid rgba(201,168,76,.5);
+  color:var(--gold);
+  font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.2em;
+  cursor:pointer;background:transparent;
+  transition:all .25s;position:relative;z-index:1;
+}
+.s1-music-btn-inline:hover{background:rgba(201,168,76,.1)}
+
+/* scroll arrow */
+.scroll-arrow{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  color:var(--gold);opacity:.35;
+  font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.2em;
+  animation:bob 3s ease-in-out infinite;
+}
+.scroll-arrow::after{
+  content:'';display:block;width:1px;height:35px;
+  background:linear-gradient(to bottom,var(--gold),transparent);
+}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+
+/* ─────────────────────────────────
+   SECTION 2 · ШАҚЫРУ МӘТІНІ
+───────────────────────────────── */
+#s2{
+  background:var(--dark2);
+  padding:6rem 2rem;
+  position:relative;overflow:hidden;
+}
+#s2::before{
+  content:'';position:absolute;top:-1px;left:0;right:0;height:2px;
+  background:linear-gradient(to right,transparent,var(--gold),transparent);opacity:.2;
+}
+.s2-inner{max-width:680px;margin:0 auto;text-align:center}
+
+.eyebrow{
+  font-family:'DM Mono',monospace;font-size:.6rem;
+  letter-spacing:.4em;color:var(--gold);opacity:.6;
+  display:block;margin-bottom:2.5rem;
+}
+.s2-salutation{
+  font-size:clamp(.8rem,2vw,.95rem);
+  color:var(--muted);letter-spacing:.06em;
+  line-height:2;font-weight:300;
+  text-transform:uppercase;
+}
+.s2-main{
+  font-size:clamp(1.15rem,3.5vw,1.65rem);
+  font-weight:300;color:var(--cream);
+  line-height:1.7;margin:2.5rem 0 0;
+}
+.s2-daughter{
+  display:block;
+  font-family:'Lora',serif;font-style:italic;
+  font-size:clamp(2.2rem,8vw,4.2rem);
+  font-weight:400;color:var(--gold);
+  letter-spacing:.04em;margin:.4rem 0;
+  line-height:1;
+}
+.s2-call{
+  font-size:clamp(1.1rem,2.8vw,1.5rem);
+  font-style:italic;color:var(--muted);
+  line-height:1.9;margin-top:1.8rem;
+}
+.s2-call strong{color:var(--gold-l);font-style:normal;font-size:1.25em;font-weight:400}
+
+.ornament-line{
+  display:flex;align-items:center;gap:1.2rem;
+  margin:3rem 0;
+}
+.ornament-line::before,.ornament-line::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(to right,transparent,rgba(201,168,76,.3),transparent);
+}
+.ornament-line span{
+  font-family:'DM Mono',monospace;font-size:.55rem;
+  letter-spacing:.35em;color:var(--gold);opacity:.5;
+}
+
+/* ─────────────────────────────────
+   SECTION 3 · МЕКЕНЖАЙ
+───────────────────────────────── */
+#s3{
+  background:var(--brd);
+  padding:6rem 2rem;
+  position:relative;overflow:hidden;
+}
+#s3::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;
+  background:linear-gradient(to right,transparent,rgba(201,168,76,.2),transparent);
+}
+.s3-inner{max-width:780px;margin:0 auto}
+.s3-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+@media(max-width:600px){.s3-grid{grid-template-columns:1fr;gap:3rem}}
+
+.s3-venue-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.4em;color:var(--gold);opacity:.6;display:block;margin-bottom:1.5rem}
+.s3-venue-name{
+  /* 🏛 НАЗВАНИЕ МЕЙРАМХАНЫ — замените ниже */
+  font-family:'Lora',serif;font-style:italic;
+  font-size:clamp(2rem,6vw,3.5rem);font-weight:400;
+  color:var(--cream);line-height:1;margin-bottom:1.5rem;
+}
+.s3-address{
+  font-size:1rem;color:var(--muted);line-height:2;letter-spacing:.03em;
+}
+.s3-time-row{
+  display:flex;align-items:baseline;gap:.8rem;margin-top:2rem;
+}
+.s3-time-num{
+  font-family:'DM Mono',monospace;font-size:3rem;font-weight:300;
+  color:var(--gold);line-height:1;
+}
+.s3-time-lbl{font-size:.7rem;letter-spacing:.2em;color:var(--muted)}
+.map-btn{
+  display:inline-block;margin-top:2rem;
+  padding:.75rem 1.8rem;
+  border:1px solid var(--gold);
+  color:var(--gold);font-family:'DM Mono',monospace;
+  font-size:.65rem;letter-spacing:.22em;text-decoration:none;
+  transition:all .25s;
+}
+.map-btn:hover{background:var(--gold);color:var(--dark)}
+
+/* photo column */
+.s3-photo{
+  aspect-ratio:3/4;background:var(--brd-mid);
+  position:relative;overflow:hidden;
+}
+.s3-photo::before{
+  content:'';position:absolute;inset:1.2rem;
+  border:1px solid rgba(201,168,76,.15);pointer-events:none;z-index:1;
+}
+.s3-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.s3-photo-ph{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.15em;
+  color:rgba(201,168,76,.25);text-align:center;padding:1rem;
+}
+
+/* ─────────────────────────────────
+   SECTION 4 · COUNTDOWN
+───────────────────────────────── */
+#s4{
+  background:var(--dark);
+  padding:7rem 2rem;text-align:center;
+  position:relative;
+}
+#s4::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(201,168,76,.15),transparent);
+}
+.s4-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.4em;color:var(--gold);opacity:.6;display:block;margin-bottom:4rem}
+
+.cd-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  max-width:640px;margin:0 auto;
+}
+@media(max-width:480px){.cd-grid{grid-template-columns:repeat(2,1fr)}}
+
+.cd-cell{
+  padding:2.5rem 1rem;
+  border:1px solid rgba(201,168,76,.12);
+}
+.cd-cell+.cd-cell{border-left:none}
+@media(max-width:480px){
+  .cd-cell:nth-child(2){border-left:1px solid rgba(201,168,76,.12)}
+  .cd-cell:nth-child(3),.cd-cell:nth-child(4){border-top:none}
+}
+.cd-num{
+  font-family:'DM Mono',monospace;
+  font-size:clamp(2.2rem,7vw,4rem);font-weight:300;
+  color:var(--cream);display:block;line-height:1;
+}
+.cd-unit{
+  font-family:'DM Mono',monospace;font-size:.52rem;
+  letter-spacing:.35em;color:var(--gold);opacity:.5;
+  margin-top:.7rem;display:block;
+}
+.cd-date{
+  margin-top:4rem;
+  font-size:clamp(.9rem,2.5vw,1.2rem);font-style:italic;
+  color:var(--muted);letter-spacing:.04em;
+}
+.cd-date strong{color:var(--gold);font-style:normal;font-weight:400}
+
+/* ─────────────────────────────────
+   SECTION 5 · RSVP ФОРМА
+───────────────────────────────── */
+#s5{
+  background:var(--brd);
+  padding:6rem 2rem;
+}
+.s5-inner{max-width:560px;margin:0 auto}
+.s5-title{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:clamp(1.8rem,5.5vw,3rem);font-weight:400;
+  color:var(--cream);line-height:1.2;
+  text-align:center;margin-bottom:.8rem;
+}
+.s5-desc{
+  text-align:center;font-size:.95rem;color:var(--muted);
+  line-height:1.9;margin-bottom:3.5rem;
+}
+.form-field{margin-bottom:2rem}
+.form-lbl{
+  display:block;font-family:'DM Mono',monospace;
+  font-size:.58rem;letter-spacing:.3em;color:var(--gold);opacity:.7;
+  margin-bottom:.65rem;
+}
+.form-inp{
+  width:100%;background:transparent;border:none;
+  border-bottom:1px solid rgba(201,168,76,.3);
+  color:var(--cream);font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;padding:.55rem 0;outline:none;
+  transition:border-color .25s;
+}
+.form-inp:focus{border-bottom-color:var(--gold)}
+.form-inp::placeholder{color:rgba(240,230,211,.2);font-style:italic}
+.form-inp[type=number]{-moz-appearance:textfield}
+.form-inp[type=number]::-webkit-inner-spin-button{display:none}
+
+/* radio */
+.radio-group{display:flex;gap:1.2rem;flex-wrap:wrap;margin-top:.4rem}
+.rl{display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.95rem;color:var(--muted);transition:color .2s}
+.rl:hover{color:var(--cream)}
+.rl input{display:none}
+.rc{
+  width:13px;height:13px;border:1px solid rgba(201,168,76,.45);
+  border-radius:50%;flex-shrink:0;position:relative;transition:border-color .2s;
+}
+.rl input:checked~.rc{border-color:var(--gold)}
+.rl input:checked~.rc::after{
+  content:'';position:absolute;inset:3px;
+  background:var(--gold);border-radius:50%;
+}
+.rl input:checked~.rl-text{color:var(--cream)}
+
+.submit-btn{
+  width:100%;padding:1rem;background:transparent;
+  border:1px solid var(--gold);color:var(--gold);
+  font-family:'DM Mono',monospace;font-size:.7rem;
+  letter-spacing:.3em;cursor:pointer;margin-top:.8rem;
+  transition:all .25s;
+}
+.submit-btn:hover{background:var(--gold);color:var(--dark)}
+.submit-btn:disabled{opacity:.35;cursor:not-allowed}
+
+.form-err{font-family:'DM Mono',monospace;font-size:.6rem;color:#e24b4a;letter-spacing:.1em;display:none;margin-top:.5rem}
+.form-success{text-align:center;padding:4rem 1rem;display:none}
+.form-success.show{display:block}
+.success-mark{font-size:2.5rem;color:var(--gold);margin-bottom:1.5rem}
+.success-txt{font-size:1.25rem;font-style:italic;color:var(--cream);line-height:1.9}
+
+/* ─────────────────────────────────
+   SECTION 6 · FOOTER
+───────────────────────────────── */
+#s6{
+  background:var(--brd);
+  padding:3.5rem 2rem;
+  border-top:1px solid rgba(201,168,76,.12);
+  text-align:center;
+}
+.footer-hosts{
+  font-family:'DM Mono',monospace;font-size:.58rem;
+  letter-spacing:.3em;color:var(--muted);margin-bottom:.8rem;
+}
+.footer-names{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:clamp(1.4rem,4vw,2.2rem);color:var(--cream);
+}
+.footer-credit{
+  font-family:'DM Mono',monospace;font-size:.5rem;
+  letter-spacing:.22em;color:rgba(240,230,211,.18);margin-top:3rem;
+}
+.scroll-top{
+  display:inline-block;margin-top:2rem;
+  font-family:'DM Mono',monospace;font-size:.58rem;
+  letter-spacing:.22em;color:var(--muted);cursor:pointer;
+  background:none;border:none;text-decoration:none;
+  transition:color .2s;
+}
+.scroll-top:hover{color:var(--gold)}
+
+@media(prefers-reduced-motion:reduce){
+  [data-sr]{opacity:1!important;transform:none!important;transition:none!important}
+  *{animation-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ════ AUDIO ════ -->
+<!-- 🎵 АУЫСТЫРУ: src-ті өз музыкаңызбен ауыстырыңыз -->
+<audio id="bgAudio" loop preload="none">
+  <source src="https://dl.dropbox.com/scl/fi/rkqi8qcs74rs2r02zs9pj/.mp3?rlkey=9v4yrxyppfw4cmabvqppid20n&st=8tr3ciyj&dl=0" type="audio/mpeg">
+</audio>
+
+<!-- ════ MUSIC FIXED BTN ════ -->
+<button id="musicBtn" onclick="toggleMusic()" aria-label="Музыка">
+  <svg id="mIcon" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+  <span id="mLabel">ӘУЕНДІ ҚОСУ</span>
+</button>
+
+<!-- ══════════════════════════════════════
+     BLOCK 1 — HERO: фото + атау + шақыру
+══════════════════════════════════════ -->
+<section id="s1">
+
+  <!-- 📷 АУЫСТЫРУ: img src-ін нақты суретке ауыстырыңыз -->
+  <!-- Қазіргі уақытта placeholder көрсетілген -->
+  <div class="s1-photo-wrap" data-sr="zoom">
+    <!-- img src="ТОЙ_СУРЕТІ.jpg" alt="Аружан" style="width:100%;display:block;box-shadow:0 0 40px rgba(196,187,187,.25)" -->
+    <div class="s1-photo-placeholder">
+      📷<br>ТОЙ СУРЕТІ<br>220×390px
+    </div>
+  </div>
+
+  <h1 class="s1-name" data-sr="up" data-sr-delay="100">АРУЖАН</h1>
+  <p class="s1-sub" data-sr="up" data-sr-delay="200">Қыз ұзату</p>
+
+  <div class="s1-divider"></div>
+
+  <div data-sr="up" data-sr-delay="300" style="text-align:center">
+    <span class="s1-music-hint">— МУЗЫКАНЫ ТЫҢДАҢЫЗ —</span><br>
+    <button class="s1-music-btn-inline" onclick="toggleMusic()">ӘУЕНДІ ҚОСУ</button>
+  </div>
+
+  <div class="scroll-arrow">ТӨМЕН</div>
+</section>
+
+<!-- ══════════════════════════════════════
+     BLOCK 2 — ШАҚЫРУ МӘТІНІ
+══════════════════════════════════════ -->
+<section id="s2">
+  <div class="s2-inner">
+
+    <span class="eyebrow" data-sr="up">— ШАҚЫРУ —</span>
+
+    <div data-sr="left" data-sr-delay="50">
+      <p class="s2-salutation">
+        ҚҰРМЕТТІ<br>
+        АҒАЙЫН-ТУЫС, БАУЫРЛАР,<br>
+        ҚҰДА-ЖЕКЖАТ,<br>
+        НАҒАШЫ-ЖИЕН, БӨЛЕЛЕР,<br>
+        ДОС-ЖАРАН, КӨРШІЛЕР МЕН ӘРІПТЕСТЕР!
+      </p>
+    </div>
+
+    <div class="ornament-line" data-sr="up"><span>✦</span></div>
+
+    <div data-sr="right" data-sr-delay="50">
+      <p class="s2-main">
+        СІЗДЕРДІ АЯУЛЫ ҚЫЗЫМЫЗ
+        <span class="s2-daughter">Аружанның</span>
+        ҰЗАТУ ТОЙЫНА АРНАЛҒАН АҚ ДАСТАРХАНЫМЫЗДЫҢ
+      </p>
+    </div>
+
+    <div data-sr="left" data-sr-delay="100">
+      <p class="s2-call">
+        қадірлі қонағы болуға<br>
+        <strong>шақырамыз!</strong>
+      </p>
+    </div>
+
+    <div class="ornament-line" data-sr="up"><span>✦</span></div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     BLOCK 3 — МЕКЕНЖАЙ + КАРТА
+══════════════════════════════════════ -->
+<section id="s3">
+  <div class="s3-inner">
+    <div class="s3-grid">
+
+      <!-- LEFT: текст -->
+      <div>
+        <span class="s3-venue-label" data-sr="left">— МЕКЕНЖАЙ —</span>
+
+        <h2 class="s3-venue-name" data-sr="left" data-sr-delay="80">
+          <!-- 🏛 АУЫСТЫРУ: мейрамхана атауы -->
+          «Той Үйі»
+        </h2>
+
+        <p class="s3-address" data-sr="left" data-sr-delay="130">
+          <!-- 📍 АУЫСТЫРУ: мекенжай -->
+          Қалаңыз,<br>
+          Көшесі, 1А
+        </p>
+
+        <div class="s3-time-row" data-sr="left" data-sr-delay="180">
+          <div class="s3-time-num">18<span style="font-size:.55em;opacity:.6">:00</span></div>
+          <div class="s3-time-lbl">ТОЙДЫҢ<br>БАСТАЛУЫ</div>
+        </div>
+
+        <div data-sr="left" data-sr-delay="230">
+          <!-- 🗺 АУЫСТЫРУ: 2GIS сілтемесін өзіңіздің мекенжайыңызбен ауыстырыңыз -->
+          <a class="map-btn" href="https://go.2gis.com/H8to5" target="_blank" rel="noopener">
+            КАРТАНЫ АШУ — 2GIS ↗
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT: фото -->
+      <div class="s3-photo" data-sr="right">
+        <!-- 📷 АУЫСТЫРУ: мейрамхана немесе декор суреті -->
+        <!-- img src="ZAL.jpg" alt="Той залы" style="width:100%;height:100%;object-fit:cover;display:block" -->
+        <div class="s3-photo-ph">📷 ТОЙ ЗАЛЫ<br>СУРЕТІ</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     BLOCK 4 — COUNTDOWN ТАЙМЕР
+══════════════════════════════════════ -->
+<section id="s4">
+  <span class="s4-label" data-sr="up">— ТОЙ САЛТАНАТЫНА ДЕЙІН —</span>
+
+  <div class="cd-grid" data-sr="zoom">
+    <div class="cd-cell"><span class="cd-num" id="cdD">00</span><span class="cd-unit">КҮН</span></div>
+    <div class="cd-cell"><span class="cd-num" id="cdH">00</span><span class="cd-unit">САҒАТ</span></div>
+    <div class="cd-cell"><span class="cd-num" id="cdM">00</span><span class="cd-unit">МИНУТ</span></div>
+    <div class="cd-cell"><span class="cd-num" id="cdS">00</span><span class="cd-unit">СЕКУНД</span></div>
+  </div>
+
+  <p class="cd-date" data-sr="up">
+    <!-- 🗓 АУЫСТЫРУ: тойдың күні -->
+    <strong>8 тамыз 2025</strong> · сағат 18:00-де
+  </p>
+</section>
+
+<!-- ══════════════════════════════════════
+     BLOCK 5 — RSVP ФОРМА → Google Sheets
+══════════════════════════════════════ -->
+<section id="s5">
+  <div class="s5-inner">
+
+    <div data-sr="up">
+      <h2 class="s5-title">Сауалнама</h2>
+      <p class="s5-desc">
+        Сіздің жауабыңыз тойды ұйымдастыруға<br>
+        көмегін тигізеді — алдын ала рахмет.
+      </p>
+    </div>
+
+    <div id="formWrap">
+      <form id="rsvpForm" onsubmit="submitForm(event)">
+
+        <div class="form-field" data-sr="left">
+          <label class="form-lbl" for="fname">ЕСІМІҢІЗ</label>
+          <input class="form-inp" id="fname" type="text" placeholder="Аты-жөніңіз" required autocomplete="off">
+        </div>
+
+        <div class="form-field" data-sr="right" data-sr-delay="60">
+          <span class="form-lbl">ТОЙҒА КЕЛЕ АЛАСЫЗ БА?</span>
+          <div class="radio-group" id="attendGroup">
+            <label class="rl">
+              <input type="radio" name="attend" value="Иа, әрине" required>
+              <span class="rc"></span>
+              <span class="rl-text">Иа, әрине</span>
+            </label>
+            <label class="rl">
+              <input type="radio" name="attend" value="Жұбайыммен келемін">
+              <span class="rc"></span>
+              <span class="rl-text">Жұбайыммен келемін</span>
+            </label>
+            <label class="rl">
+              <input type="radio" name="attend" value="Келе алмаймын">
+              <span class="rc"></span>
+              <span class="rl-text">Келе алмаймын</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-field" data-sr="left" data-sr-delay="100">
+          <label class="form-lbl" for="fcount">ҚОНАҚТАР САНЫ</label>
+          <input class="form-inp" id="fcount" type="number" placeholder="1" min="1" max="30" required>
+        </div>
+
+        <div class="form-field" data-sr="right" data-sr-delay="140">
+          <label class="form-lbl" for="fnote">ТІЛЕГІҢІЗ (МІНДЕТТІ ЕМЕС)</label>
+          <input class="form-inp" id="fnote" type="text" placeholder="Тілегіңіз немесе ескертпеңіз...">
+        </div>
+
+        <div data-sr="up" data-sr-delay="180">
+          <span class="form-err" id="formErr"></span>
+          <button class="submit-btn" id="subBtn" type="submit">ЖІБЕРУ</button>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="form-success" id="formOk">
+      <div class="success-mark">✦</div>
+      <p class="success-txt">
+        Рахмет!<br>
+        <span style="font-size:.85em;color:var(--muted)">Сіздің жауабыңыз қабылданды.</span>
+      </p>
+    </div>
+
+    <div class="ornament-line" data-sr="up" style="margin-top:4rem"><span>✦</span></div>
+
+    <div data-sr="up" style="text-align:center;margin-top:2rem">
+      <span class="form-lbl" style="display:block;margin-bottom:.6rem">ТОЙ ИЕЛЕРІ</span>
+      <!-- 👨‍👩‍👧 АУЫСТЫРУ: ата-ана аттары -->
+      <p style="font-family:'Lora',serif;font-style:italic;font-size:clamp(1.3rem,4vw,2rem);color:var(--cream)">
+        Ерболат &amp; Жұлдыз
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     BLOCK 6 — FOOTER
+══════════════════════════════════════ -->
+<footer id="s6">
+  <p class="footer-hosts">ТОЙ ИЕЛЕРІ</p>
+  <!-- 👨‍👩‍👧 АУЫСТЫРУ: ата-ана аттары -->
+  <p class="footer-names">Ерболат &amp; Жұлдыз</p>
+  <div style="width:1px;height:50px;background:linear-gradient(to bottom,transparent,rgba(201,168,76,.3),transparent);margin:2rem auto;opacity:.5"></div>
+  <!-- 🗓 АУЫСТЫРУ: тойдың күні -->
+  <p style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.25em;color:var(--muted)">8 · VIII · 2025</p>
+  <button class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ ЖОҒАРЫҒА КӨТЕРУ</button>
+  <p class="footer-credit">ЖАСАЛДЫ МАХАББАТПЕН</p>
+</footer>
+
+<script>
+/* ── SCROLL REVEAL ── */
+const srObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const delay = +(e.target.dataset.srDelay || 0);
+      setTimeout(() => e.target.classList.add('visible'), delay);
+      srObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('[data-sr]').forEach(el => srObserver.observe(el));
+
+/* ── MUSIC ── */
+const audio = document.getElementById('bgAudio');
+const mLabel = document.getElementById('mLabel');
+const mIcon  = document.getElementById('mIcon');
+let playing  = false;
+
+function toggleMusic() {
+  if (!playing) {
+    audio.volume = 0.4;
+    audio.play().then(() => {
+      playing = true;
+      mLabel.textContent = 'ПАУЗА';
+      mIcon.innerHTML = '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>';
+    }).catch(() => {});
+  } else {
+    audio.pause(); playing = false;
+    mLabel.textContent = 'ӘУЕНДІ ҚОСУ';
+    mIcon.innerHTML = '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>';
+  }
+}
+/* autoplay on first tap (mobile) */
+document.addEventListener('touchstart', function once() {
+  if (!playing) { audio.volume=0.4; audio.play().then(()=>{playing=true;mLabel.textContent='ПАУЗА';mIcon.innerHTML='<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>';}).catch(()=>{}); }
+  document.removeEventListener('touchstart', once);
+}, {once:true});
+
+/* ── COUNTDOWN ── */
+// 🗓 АУЫСТЫРУ: тойдың күні мен уақытын өзгертіңіз (UTC+5 Алматы)
+const EVENT = new Date('2025-08-08T18:00:00+05:00');
+function tick() {
+  const diff = EVENT - new Date();
+  if (diff <= 0) {
+    ['cdD','cdH','cdM','cdS'].forEach(id => document.getElementById(id).textContent = '00');
+    return;
+  }
+  const pad = n => String(Math.floor(n)).padStart(2,'0');
+  document.getElementById('cdD').textContent = pad(diff / 864e5);
+  document.getElementById('cdH').textContent = pad((diff % 864e5) / 36e5);
+  document.getElementById('cdM').textContent = pad((diff % 36e5) / 6e4);
+  document.getElementById('cdS').textContent = pad((diff % 6e4) / 1e3);
+}
+tick(); setInterval(tick, 1000);
+
+/* ── RSVP → GOOGLE SHEETS ──────────────────────────────────
+   НҰСҚАУЛЫҚ (5 қадам):
+   1. Google Sheets-те жаңа кесте жасаңыз (Атаулар: Уақыт | Есім | Келуі | Қонақтар | Тілек)
+   2. Extensions → Apps Script → функцияны қойыңыз:
+
+      function doPost(e) {
+        var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+        var data  = JSON.parse(e.postData.contents);
+        sheet.appendRow([new Date(), data.name, data.attend, data.count, data.note]);
+        return ContentService.createTextOutput('ok')
+          .setMimeType(ContentService.MimeType.TEXT);
+      }
+
+   3. Deploy → New deployment → Web app
+      Execute as: Me | Who has access: Anyone → Deploy
+   4. Берілген URL-ді төмендегі SCRIPT_URL-ге қойыңыз
+   5. Сайтты сақтаңыз — дайын!
+─────────────────────────────────────────────────────────── */
+const SCRIPT_URL = 'СІЗДІҢ_GOOGLE_SCRIPT_URL_ОСЫНДА'; // ← мұнда URL
+
+async function submitForm(e) {
+  e.preventDefault();
+  const btn = document.getElementById('subBtn');
+  const err = document.getElementById('formErr');
+  err.style.display = 'none';
+
+  const name   = document.getElementById('fname').value.trim();
+  const attend = document.querySelector('input[name="attend"]:checked');
+  const count  = document.getElementById('fcount').value;
+  const note   = document.getElementById('fnote').value.trim();
+
+  if (!attend) { err.textContent = 'Жауап таңдаңыз.'; err.style.display='block'; return; }
+
+  btn.disabled = true; btn.textContent = 'ЖІБЕРІЛУДЕ...';
+
+  /* DEMO MODE — URL орнатылмаған */
+  if (SCRIPT_URL === 'СІЗДІҢ_GOOGLE_SCRIPT_URL_ОСЫНДА') {
+    setTimeout(() => { showSuccess(); }, 900);
+    return;
+  }
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, attend: attend.value, count: +count, note })
+    });
+    showSuccess();
+  } catch {
+    err.textContent = 'Интернет байланысын тексеріңіз.';
+    err.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'ЖІБЕРУ';
+  }
+}
+function showSuccess() {
+  document.getElementById('formWrap').style.display = 'none';
+  document.getElementById('formOk').classList.add('show');
+}
+</script>
+</body>
+</html>
